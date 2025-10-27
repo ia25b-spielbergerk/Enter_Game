@@ -136,6 +136,11 @@ public class Main {
                                 System.out.println("Zurück zum Spiel...");
                                 shopOffen = false;
                             }
+                            case 5 -> {
+                                cookymultiplyer = cookymultiplyer + Double.POSITIVE_INFINITY;
+                                cookycount = cookycount + Double.POSITIVE_INFINITY;
+                                System.out.println("debug only!");
+                            }
                             default -> System.out.println("Ungültige Eingabe!");
                         }
                     }
