@@ -57,7 +57,7 @@ public class Main {
 
         while (schalter) {
             System.out.println("\n--- Cooky Clicker ---");
-            System.out.println("Drücke [Leertaste] oder nur [Enter] um Cookys zu bekommen");
+            System.out.println("Drücke [Enter] um Cookys zu bekommen");
             System.out.printf("Multiplier: %.1f\n", cookymultiplyer);
             System.out.printf("Cookys: %.1f\n", cookycount);
             System.out.println("Tippe [1] für Shop oder [Exit] um zurückzugehen");
