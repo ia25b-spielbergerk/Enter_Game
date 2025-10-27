@@ -36,7 +36,26 @@ public class Main {
         System.out.println("4. Exit:");
     }
 
-    public static void klicktest() {}
+    public static void klicktest() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("=== Klicktest ===");
+        System.out.println("Drücke so oft du kannst die [Enter]-Taste!");
+        System.out.println("Sobald du Enter drückst, startet der 10-Sekunden-Test.");
+
+        scanner.nextLine();
+
+        long startZeit = System.currentTimeMillis();
+        int klicks = 0;
+
+        while (System.currentTimeMillis() - startZeit < 10000) {
+            scanner.nextLine();
+            klicks++;
+        }
+
+        System.out.println("Zeit ist vorbei!");
+        System.out.println("Du hast " + klicks + " Klicks in 10 Sekunden geschafft!");
+    }
 
     public static void reaktionszeit() {}
 
