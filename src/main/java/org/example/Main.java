@@ -51,21 +51,21 @@ public class Main {
         double price2 = 50;
         double price3 = 100;
 
-        double priceIncrease1 = 1.2;
-        double priceIncrease2 = 1.3;
-        double priceIncrease3 = 1.4;
+        double priceIncrease1 = 1.1;
+        double priceIncrease2 = 1.2;
+        double priceIncrease3 = 1.3;
 
         while (schalter) {
             System.out.println("\n--- Cooky Clicker ---");
-            System.out.println("Drücke [Leertaste] um Cookys zu bekommen");
-            System.out.println("Multiplyer: " + cookymultiplyer);
-            System.out.println("Cookys: " + cookycount);
+            System.out.println("Drücke [Leertaste] oder nur [Enter] um Cookys zu bekommen");
+            System.out.printf("Multiplier: %.1f\n", cookymultiplyer);
+            System.out.printf("Cookys: %.1f\n", cookycount);
             System.out.println("Tippe [1] für Shop oder [Exit] um zurückzugehen");
 
             String input = scanner.nextLine();
 
             switch (input) {
-                case " " -> cookycount += 1 * cookymultiplyer;
+                case "" -> cookycount += cookymultiplyer;
 
                 case "1" -> {
                     boolean shopOffen = true;
@@ -75,6 +75,7 @@ public class Main {
                         System.out.printf("2. Goldener Cooky: +2 Multiplier (%.0f Cookys)\n", price2);
                         System.out.printf("3. Regenbogen Cooky: +3 Multiplier (%.0f Cookys)\n", price3);
                         System.out.println("4. Zurück zum Spiel");
+                        System.out.printf("Aktueller Multiplier: %.1f | Cookys: %.1f\n", cookymultiplyer, cookycount);
                         System.out.print("Wähle: ");
 
                         int choice;
@@ -87,33 +88,48 @@ public class Main {
 
                         switch (choice) {
                             case 1 -> {
-                                if (cookycount >= price1) {
-                                    cookymultiplyer += 1;
-                                    cookycount -= price1;
-                                    price1 *= priceIncrease1;
-                                    System.out.println("Du hast einen normalen Cooky gekauft!");
+                                System.out.print("Wie viele normale Cookys willst du kaufen? ");
+                                int shopcount = scanner.nextInt();
+                                scanner.nextLine();
+
+                                double totalCost = price1 * ((Math.pow(priceIncrease1, shopcount) - 1) / (priceIncrease1 - 1));
+                                if (cookycount >= totalCost) {
+                                    cookycount -= totalCost;
+                                    cookymultiplyer += shopcount;
+                                    price1 *= Math.pow(priceIncrease1, shopcount);
+                                    System.out.printf("Du hast %d normale Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
                                 } else {
-                                    System.out.println("Nicht genug Cookys!");
+                                    System.out.println("Nicht genügend Cookys für diesen Kauf!");
                                 }
                             }
                             case 2 -> {
-                                if (cookycount >= price2) {
-                                    cookymultiplyer += 2;
-                                    cookycount -= price2;
-                                    price2 *= priceIncrease2;
-                                    System.out.println("Du hast einen goldenen Cooky gekauft!");
+                                System.out.print("Wie viele goldene Cookys willst du kaufen? ");
+                                int shopcount = scanner.nextInt();
+                                scanner.nextLine();
+
+                                double totalCost = price2 * ((Math.pow(priceIncrease2, shopcount) - 1) / (priceIncrease2 - 1));
+                                if (cookycount >= totalCost) {
+                                    cookycount -= totalCost;
+                                    cookymultiplyer += 2 * shopcount;
+                                    price2 *= Math.pow(priceIncrease2, shopcount);
+                                    System.out.printf("Du hast %d goldene Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
                                 } else {
-                                    System.out.println("Nicht genug Cookys!");
+                                    System.out.println("Nicht genügend Cookys für diesen Kauf!");
                                 }
                             }
                             case 3 -> {
-                                if (cookycount >= price3) {
-                                    cookymultiplyer += 3;
-                                    cookycount -= price3;
-                                    price3 *= priceIncrease3;
-                                    System.out.println("Du hast einen Regenbogen-Cooky gekauft!");
+                                System.out.print("Wie viele Regenbogen-Cookys willst du kaufen? ");
+                                int shopcount = scanner.nextInt();
+                                scanner.nextLine();
+
+                                double totalCost = price3 * ((Math.pow(priceIncrease3, shopcount) - 1) / (priceIncrease3 - 1));
+                                if (cookycount >= totalCost) {
+                                    cookycount -= totalCost;
+                                    cookymultiplyer += 3 * shopcount;
+                                    price3 *= Math.pow(priceIncrease3, shopcount);
+                                    System.out.printf("Du hast %d Regenbogen-Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
                                 } else {
-                                    System.out.println("Nicht genug Cookys!");
+                                    System.out.println("Nicht genügend Cookys für diesen Kauf!");
                                 }
                             }
                             case 4 -> {
