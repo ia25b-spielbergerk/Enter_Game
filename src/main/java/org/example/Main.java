@@ -30,8 +30,8 @@ public class Main {
 
     public static void auswahlfeld() {
         System.out.println("\nWas willst du spielen: ");
-        System.out.println("1. Spacebar per second:");
-        System.out.println("2. Reaction time Test:");
+        System.out.println("1. Enter pro second:");
+        System.out.println("2. Reaction Zeit Test:");
         System.out.println("3. Cooky clicker");
         System.out.println("4. Exit:");
     }
@@ -96,14 +96,18 @@ public class Main {
 
         double price1 = 10;
         double price2 = 50;
-        double price3 = 100;
+        double price3 = 150;
+        double price4 = 500;
+        double price5 = 2000;
 
         double priceIncrease1 = 1.1;
-        double priceIncrease2 = 1.2;
-        double priceIncrease3 = 1.3;
+        double priceIncrease2 = 1.15;
+        double priceIncrease3 = 1.2;
+        double priceIncrease4 = 1.25;
+        double priceIncrease5 = 1.3;
 
         while (schalter) {
-            System.out.println("\n--- Cooky Clicker ---");
+            System.out.println("\n=== Cooky Clicker ===");
             System.out.println("Drücke [Enter] um Cookys zu bekommen");
             System.out.printf("Multiplier: %.1f\n", cookymultiplyer);
             System.out.printf("Cookys: %.1f\n", cookycount);
@@ -120,8 +124,10 @@ public class Main {
                         System.out.println("\n--- Cooky Shop ---");
                         System.out.printf("1. Normaler Cooky: +1 Multiplier (%.0f Cookys)\n", price1);
                         System.out.printf("2. Goldener Cooky: +2 Multiplier (%.0f Cookys)\n", price2);
-                        System.out.printf("3. Regenbogen Cooky: +3 Multiplier (%.0f Cookys)\n", price3);
-                        System.out.println("4. Zurück zum Spiel");
+                        System.out.printf("3. Regenbogen Cooky: +5 Multiplier (%.0f Cookys)\n", price3);
+                        System.out.printf("4. Mega Cooky: +10 Multiplier (%.0f Cookys)\n", price4);
+                        System.out.printf("5. Legendärer Cooky: +25 Multiplier (%.0f Cookys)\n", price5);
+                        System.out.println("6. Zurück zum Spiel");
                         System.out.printf("Aktueller Multiplier: %.1f | Cookys: %.1f\n", cookymultiplyer, cookycount);
                         System.out.print("Wähle: ");
 
@@ -133,61 +139,80 @@ public class Main {
                         choice = scanner.nextInt();
                         scanner.nextLine();
 
+                        int shopcount;
+                        double totalCost;
                         switch (choice) {
                             case 1 -> {
-                                System.out.print("Wie viele normale Cookys willst du kaufen? ");
-                                int shopcount = scanner.nextInt();
-                                scanner.nextLine();
-
-                                double totalCost = price1 * ((Math.pow(priceIncrease1, shopcount) - 1) / (priceIncrease1 - 1));
+                                System.out.print("Wie viele normale Cookys willst du kaufen? (oder max): ");
+                                String s = scanner.nextLine();
+                                if (s.equalsIgnoreCase("max")) {
+                                    shopcount = (int) Math.floor(Math.log(1 + (cookycount * (priceIncrease1 - 1) / price1)) / Math.log(priceIncrease1));
+                                } else shopcount = Integer.parseInt(s);
+                                totalCost = price1 * ((Math.pow(priceIncrease1, shopcount) - 1) / (priceIncrease1 - 1));
                                 if (cookycount >= totalCost) {
                                     cookycount -= totalCost;
                                     cookymultiplyer += shopcount;
                                     price1 *= Math.pow(priceIncrease1, shopcount);
                                     System.out.printf("Du hast %d normale Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
-                                } else {
-                                    System.out.println("Nicht genügend Cookys für diesen Kauf!");
-                                }
+                                } else System.out.println("Nicht genügend Cookys!");
                             }
                             case 2 -> {
-                                System.out.print("Wie viele goldene Cookys willst du kaufen? ");
-                                int shopcount = scanner.nextInt();
-                                scanner.nextLine();
-
-                                double totalCost = price2 * ((Math.pow(priceIncrease2, shopcount) - 1) / (priceIncrease2 - 1));
+                                System.out.print("Wie viele goldene Cookys willst du kaufen? (oder max): ");
+                                String s = scanner.nextLine();
+                                if (s.equalsIgnoreCase("max")) {
+                                    shopcount = (int) Math.floor(Math.log(1 + (cookycount * (priceIncrease2 - 1) / price2)) / Math.log(priceIncrease2));
+                                } else shopcount = Integer.parseInt(s);
+                                totalCost = price2 * ((Math.pow(priceIncrease2, shopcount) - 1) / (priceIncrease2 - 1));
                                 if (cookycount >= totalCost) {
                                     cookycount -= totalCost;
                                     cookymultiplyer += 2 * shopcount;
                                     price2 *= Math.pow(priceIncrease2, shopcount);
                                     System.out.printf("Du hast %d goldene Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
-                                } else {
-                                    System.out.println("Nicht genügend Cookys für diesen Kauf!");
-                                }
+                                } else System.out.println("Nicht genügend Cookys!");
                             }
                             case 3 -> {
-                                System.out.print("Wie viele Regenbogen-Cookys willst du kaufen? ");
-                                int shopcount = scanner.nextInt();
-                                scanner.nextLine();
-
-                                double totalCost = price3 * ((Math.pow(priceIncrease3, shopcount) - 1) / (priceIncrease3 - 1));
+                                System.out.print("Wie viele Regenbogen-Cookys willst du kaufen? (oder max): ");
+                                String s = scanner.nextLine();
+                                if (s.equalsIgnoreCase("max")) {
+                                    shopcount = (int) Math.floor(Math.log(1 + (cookycount * (priceIncrease3 - 1) / price3)) / Math.log(priceIncrease3));
+                                } else shopcount = Integer.parseInt(s);
+                                totalCost = price3 * ((Math.pow(priceIncrease3, shopcount) - 1) / (priceIncrease3 - 1));
                                 if (cookycount >= totalCost) {
                                     cookycount -= totalCost;
-                                    cookymultiplyer += 3 * shopcount;
+                                    cookymultiplyer += 5 * shopcount;
                                     price3 *= Math.pow(priceIncrease3, shopcount);
                                     System.out.printf("Du hast %d Regenbogen-Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
-                                } else {
-                                    System.out.println("Nicht genügend Cookys für diesen Kauf!");
-                                }
+                                } else System.out.println("Nicht genügend Cookys!");
                             }
                             case 4 -> {
-                                System.out.println("Zurück zum Spiel...");
-                                shopOffen = false;
+                                System.out.print("Wie viele Mega-Cookys willst du kaufen? (oder max): ");
+                                String s = scanner.nextLine();
+                                if (s.equalsIgnoreCase("max")) {
+                                    shopcount = (int) Math.floor(Math.log(1 + (cookycount * (priceIncrease4 - 1) / price4)) / Math.log(priceIncrease4));
+                                } else shopcount = Integer.parseInt(s);
+                                totalCost = price4 * ((Math.pow(priceIncrease4, shopcount) - 1) / (priceIncrease4 - 1));
+                                if (cookycount >= totalCost) {
+                                    cookycount -= totalCost;
+                                    cookymultiplyer += 10 * shopcount;
+                                    price4 *= Math.pow(priceIncrease4, shopcount);
+                                    System.out.printf("Du hast %d Mega-Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
+                                } else System.out.println("Nicht genügend Cookys!");
                             }
                             case 5 -> {
-                                cookymultiplyer = cookymultiplyer + Double.POSITIVE_INFINITY;
-                                cookycount = cookycount + Double.POSITIVE_INFINITY;
-                                System.out.println("debug only!");
+                                System.out.print("Wie viele legendäre Cookys willst du kaufen? (oder max): ");
+                                String s = scanner.nextLine();
+                                if (s.equalsIgnoreCase("max")) {
+                                    shopcount = (int) Math.floor(Math.log(1 + (cookycount * (priceIncrease5 - 1) / price5)) / Math.log(priceIncrease5));
+                                } else shopcount = Integer.parseInt(s);
+                                totalCost = price5 * ((Math.pow(priceIncrease5, shopcount) - 1) / (priceIncrease5 - 1));
+                                if (cookycount >= totalCost) {
+                                    cookycount -= totalCost;
+                                    cookymultiplyer += 25 * shopcount;
+                                    price5 *= Math.pow(priceIncrease5, shopcount);
+                                    System.out.printf("Du hast %d legendäre Cookys gekauft! (-%.0f Cookys)\n", shopcount, totalCost);
+                                } else System.out.println("Nicht genügend Cookys!");
                             }
+                            case 6 -> shopOffen = false;
                             default -> System.out.println("Ungültige Eingabe!");
                         }
                     }
