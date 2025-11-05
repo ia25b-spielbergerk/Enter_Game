@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.Map;
 import java.util.Scanner;
 
 public class CookyClicker extends MiniGame {
@@ -21,6 +22,7 @@ public class CookyClicker extends MiniGame {
         rebirthCost = 10000000000L;
 
         initializeCookies();
+        loadGame();
     }
 
     private void initializeCookies() {
@@ -44,8 +46,41 @@ public class CookyClicker extends MiniGame {
                 new Cookie("Omnipotent Cooky", basePrices[12], 1.07, 500000),
                 new Cookie("Eternal Cooky", basePrices[13], 1.075, 2000000),
                 new Cookie("Infinite Cooky", basePrices[14], 1.08, 10000000),
-                new Cookie("67 Cooky", basePrices[15], 67, 67676767)
+                new Cookie("67 Cooky", basePrices[15], 67, 999999999)
         };
+    }
+
+    private void loadGame() {
+        Map<String, String> data = Speicherung.laden();
+        if (data.isEmpty()) return;
+
+        try {
+            if (data.containsKey("cookycount")) {
+                cookycount = Double.parseDouble(data.get("cookycount"));
+            }
+            if (data.containsKey("cookymultiplyer")) {
+                cookymultiplyer = Double.parseDouble(data.get("cookymultiplyer"));
+            }
+            if (data.containsKey("rebirthMultiplier")) {
+                rebirthMultiplier = Double.parseDouble(data.get("rebirthMultiplier"));
+            }
+            if (data.containsKey("rebirthCount")) {
+                rebirthCount = Integer.parseInt(data.get("rebirthCount"));
+            }
+            if (data.containsKey("rebirthCost")) {
+                rebirthCost = Double.parseDouble(data.get("rebirthCost"));
+            }
+
+            for (int i = 0; i < cookies.length; i++) {
+                String key = "cookie" + i + "Price";
+                if (data.containsKey(key)) {
+                    double price = Double.parseDouble(data.get(key));
+                    cookies[i].setPrice(price);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Fehler beim Laden der Daten: " + e.getMessage());
+        }
     }
 
     @Override
@@ -56,14 +91,20 @@ public class CookyClicker extends MiniGame {
             printTitle();
             displayStats();
             System.out.println("Drücke [Enter] um Cookys aktiv zu bekommen");
-            System.out.println("1 = Shop (Items), 2 = Rebirth, Exit = Zurück");
+            System.out.println("1 = Shop, 2 = Rebirth, 3 = Spielstand, 4 = Speichern, 5 = Reset, Exit = Zurück");
             String input = scanner.nextLine();
 
             switch (input) {
                 case "" -> cookycount += cookymultiplyer * rebirthMultiplier;
                 case "1" -> openShop(scanner);
                 case "2" -> handleRebirth(scanner);
-                case "Exit" -> running = false;
+                case "3" -> showSpielstand(scanner);
+                case "4" -> Speicherung.speichern(this);
+                case "5" -> handleReset(scanner);
+                case "Exit" -> {
+                    Speicherung.speichern(this);
+                    running = false;
+                }
                 default -> System.out.println("Ungültige Eingabe!");
             }
         }
@@ -73,6 +114,86 @@ public class CookyClicker extends MiniGame {
         System.out.printf("Cookys: %s\n", NumberFormatter.format(cookycount));
         System.out.printf("Aktueller Multiplier: %s | Rebirth Multiplier: %.2fx | Rebirths: %d\n",
                 NumberFormatter.format(cookymultiplyer), rebirthMultiplier, rebirthCount);
+    }
+
+    private void showSpielstand(Scanner scanner) {
+        boolean inStats = true;
+
+        while (inStats) {
+            System.out.println("\n╔════════════════════════════════════════════════════════════╗");
+            System.out.println("║                    SPIELSTAND ÜBERSICHT                    ║");
+            System.out.println("╚════════════════════════════════════════════════════════════╝");
+
+            System.out.println("\n--- Allgemeine Statistiken ---");
+            System.out.printf("Cookys gesamt: %s\n", NumberFormatter.format(cookycount));
+            System.out.printf("Klick-Multiplier: %s\n", NumberFormatter.format(cookymultiplyer));
+            System.out.printf("Cookys pro Klick (mit Rebirth): %s\n", NumberFormatter.format(cookymultiplyer * rebirthMultiplier));
+
+            System.out.println("\n--- Rebirth Statistiken ---");
+            System.out.printf("Rebirths durchgeführt: %d\n", rebirthCount);
+            System.out.printf("Rebirth Multiplier: %.2fx\n", rebirthMultiplier);
+            System.out.printf("Kosten für nächsten Rebirth: %s\n", NumberFormatter.format(rebirthCost));
+            if (cookycount >= rebirthCost) {
+                System.out.println("Status: ✅ Rebirth verfügbar!");
+            } else {
+                System.out.printf("Noch benötigt: %s\n", NumberFormatter.format(rebirthCost - cookycount));
+            }
+
+            System.out.println("\n--- Cookie Preise ---");
+            for (int i = 0; i < cookies.length - 1; i++) {
+                Cookie c = cookies[i];
+                System.out.printf("%s: %s (+%d Mult.)\n",
+                        c.getName(),
+                        NumberFormatter.format(c.getPrice()),
+                        c.getMultiplierBonus());
+            }
+
+            System.out.println("\n--- Fortschritt ---");
+            double totalMultiplierBought = (cookymultiplyer - 1);
+            System.out.printf("Gekaufte Multiplier: %s\n", NumberFormatter.format(totalMultiplierBought));
+            System.out.printf("Durchschnittlicher Cookie-Preis: %s\n", NumberFormatter.format(calculateAveragePrice()));
+
+            double rebirthProgress = (cookycount / rebirthCost) * 100;
+            if (rebirthProgress > 100) rebirthProgress = 100;
+            System.out.printf("Fortschritt zum nächsten Rebirth: %.2f%%\n", rebirthProgress);
+            displayProgressBar(rebirthProgress);
+
+            System.out.println("\n--- Geheimnisse ---");
+            if (cookies[15].getPrice() > 67) {
+                System.out.println("🎉 Secret Cookie gefunden: 67 Cooky!");
+            } else {
+                System.out.println("🔒 Secret Cookie: ??? (Tipp: Probiere 67 im Shop)");
+            }
+
+            System.out.println("\n[Enter] = Zurück zum Spiel");
+            scanner.nextLine();
+            inStats = false;
+        }
+    }
+
+    private void displayProgressBar(double percentage) {
+        int barLength = 40;
+        int filled = (int) ((percentage / 100.0) * barLength);
+
+        System.out.print("[");
+        for (int i = 0; i < barLength; i++) {
+            if (i < filled) {
+                System.out.print("█");
+            } else {
+                System.out.print("░");
+            }
+        }
+        System.out.println("]");
+    }
+
+    private double calculateAveragePrice() {
+        double total = 0;
+        int count = 0;
+        for (int i = 0; i < cookies.length - 1; i++) {
+            total += cookies[i].getPrice();
+            count++;
+        }
+        return count > 0 ? total / count : 0;
     }
 
     private void openShop(Scanner scanner) {
@@ -181,5 +302,54 @@ public class CookyClicker extends MiniGame {
         System.out.println("\n✨ REBIRTH ERFOLGREICH! ✨");
         System.out.printf("Neuer Rebirth Multiplier: %.2fx\n", rebirthMultiplier);
         System.out.printf("Rebirths gesamt: %d\n", rebirthCount);
+    }
+
+    private void handleReset(Scanner scanner) {
+        System.out.println("\n=== RESET WARNUNG ===");
+        System.out.println("Dies löscht deinen GESAMTEN Spielstand!");
+        System.out.println("Alle Cookys, Multiplier und Rebirths gehen verloren!");
+        System.out.print("Wirklich zurücksetzen? (yes/no): ");
+        String confirm = scanner.nextLine();
+
+        if (confirm.equalsIgnoreCase("yes")) {
+            cookycount = 0;
+            cookymultiplyer = 1;
+            rebirthMultiplier = 1.0;
+            rebirthCount = 0;
+            rebirthCost = 10000000000L;
+
+            for (int i = 0; i < cookies.length; i++) {
+                cookies[i].reset(basePrices[i]);
+            }
+
+            Speicherung.loeschen();
+            System.out.println("\n❌ SPIEL ZURÜCKGESETZT! ❌");
+        } else {
+            System.out.println("Reset abgebrochen.");
+        }
+    }
+
+    public double getCookycount() {
+        return cookycount;
+    }
+
+    public double getCookymultiplyer() {
+        return cookymultiplyer;
+    }
+
+    public double getRebirthMultiplier() {
+        return rebirthMultiplier;
+    }
+
+    public int getRebirthCount() {
+        return rebirthCount;
+    }
+
+    public double getRebirthCost() {
+        return rebirthCost;
+    }
+
+    public Cookie[] getCookies() {
+        return cookies;
     }
 }

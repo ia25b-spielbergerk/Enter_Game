@@ -10,6 +10,12 @@ public class Reaktionszeit extends MiniGame {
     @Override
     public void start(Scanner scanner) {
         printTitle();
+
+        long highscore = Speicherung.getReaktionszeitHighscore();
+        if (highscore != Long.MAX_VALUE) {
+            System.out.println("🏆 Beste Zeit: " + highscore + " ms");
+        }
+
         System.out.println("Drücke Enter sobald die Ampel GRÜN ist!");
         System.out.println("WICHTIG: Nicht zu früh drücken!");
         System.out.println("Enter drücken um zu starten...");
@@ -27,7 +33,15 @@ public class Reaktionszeit extends MiniGame {
             return;
         }
 
-        gruenPhase(scanner);
+        long reaktionsZeit = gruenPhase(scanner);
+
+        if (reaktionsZeit < highscore) {
+            System.out.println("🎉 NEUE BESTZEIT! 🎉");
+            Speicherung.speichereReaktionszeitHighscore(reaktionsZeit);
+        } else if (highscore != Long.MAX_VALUE) {
+            long differenz = reaktionsZeit - highscore;
+            System.out.println("Noch " + differenz + " ms bis zur Bestzeit!");
+        }
     }
 
     private boolean rotPhase() {
@@ -62,7 +76,7 @@ public class Reaktionszeit extends MiniGame {
         return true;
     }
 
-    private void gruenPhase(Scanner scanner) {
+    private long gruenPhase(Scanner scanner) {
         try {
             while (System.in.available() > 0) {
                 System.in.read();
@@ -76,5 +90,6 @@ public class Reaktionszeit extends MiniGame {
         long reaktionsZeit = System.currentTimeMillis() - gruenZeit;
 
         System.out.println("Deine Reaktionszeit: " + reaktionsZeit + " ms");
+        return reaktionsZeit;
     }
 }

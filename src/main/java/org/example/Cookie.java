@@ -21,6 +21,10 @@ public class Cookie {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public double getPriceIncrease() {
         return priceIncrease;
     }
